@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Повітряні тривоги</title>
+    <link rel="stylesheet" type="text/css" href="../css/alerts_style.css">
+</head>
+<body>
+    <nav>
+        <a href="/alerts">Перевірка тривог</a>
+        <a href="/user">Особисті дані</a>
+    </nav>
+
+    <div class="container">
+        <h1>Повітряні тривоги в Україні</h1>
+        <iframe id="alertMap" src="https://ubilling.net.ua/aerialalerts/?map=true"></iframe>
+
+        <h2>Перевірка cтатусу тривоги за регіоном</h2>
+        <div class="controls">
+            <select id="region">
+                <option value="Вінницька область">Вінницька область</option>
+                <option value="Волинська область">Волинська область</option>
+                <option value="Дніпропетровська область">Дніпропетровська область</option>
+                <option value="Донецька область">Донецька область</option>
+                <option value="Житомирська область">Житомирська область</option>
+                <option value="Закарпатська область">Закарпатська область</option>
+                <option value="Запорізька область">Запорізька область</option>
+                <option value="Івано-Франківська область">Івано-Франківська область</option>
+                <option value="Київська область">Київська область</option>
+                <option value="Кіровоградська область">Кіровоградська область</option>
+                <option value="Луганська область">Луганська область</option>
+                <option value="Львівська область">Львівська область</option>
+                <option value="Миколаївська область">Миколаївська область</option>
+                <option value="Одеська область">Одеська область</option>
+                <option value="Полтавська область">Полтавська область</option>
+                <option value="Рівненська область">Рівненська область</option>
+                <option value="Сумська область">Сумська область</option>
+                <option value="Тернопільська область">Тернопільська область</option>
+                <option value="Харківська область">Харківська область</option>
+                <option value="Херсонська область">Херсонська область</option>
+                <option value="Хмельницька область">Хмельницька область</option>
+                <option value="Черкаська область">Черкаська область</option>
+                <option value="Чернівецька область">Чернівецька область</option>
+                <option value="Чернігівська область">Чернігівська область</option>
+                <option value="м. Київ">м. Київ</option>
+            </select>
+            <button id="checkButton" onclick="checkAlert()">Перевірити</button>
+        </div>
+        <div id="result"></div>
+    </div>
+
+    <script>
+        function checkAlert() {
+            const region = document.getElementById('region').value;
+            const resultDiv = document.getElementById('result');
+            const checkButton = document.getElementById('checkButton');
+
+            checkButton.disabled = true;
+            resultDiv.innerHTML = 'Завантаження...';
+            resultDiv.className = '';
+            const request = new XMLHttpRequest();
+            const requestURL = `/alert?region=${region}`;
+
+            request.open("GET", requestURL, true);
+            request.onload = function() {
+                if (request.status === 200) {
+                    const data = JSON.parse(request.responseText);
+                    console.log('Відповідь від сервера:', data);
+                    if (data.status === 'error') {
+                        resultDiv.innerHTML = `Помилка: ${data.error}`;
+                        resultDiv.className = 'error';
+                    } else {
+                        const statusText = data.status === 'active' ? 'Тривога активна ' : 'Тривоги немає';
+                        resultDiv.innerHTML = `
+                            Статус тривоги в регіоні - ${region}: ${statusText}<br>
+                            Остання зміна cтатусу тривоги: ${data.lastChange}
+                        `;
+                        resultDiv.className = data.status === 'active' ? 'error' : 'success';
+                    }
+                } else {
+                    resultDiv.innerHTML = `Помилка: ${request.statusText || 'Невідома помилка'}`;
+                    resultDiv.className = 'error';
+                }
+
+                setTimeout(() => {
+                    checkButton.disabled = false;
+                }, 2000);
+            };
+
+            request.onerror = function() {
+                resultDiv.innerHTML = 'Помилка: Не вдалося виконати запит';
+                resultDiv.className = 'error';
+                setTimeout(() => {
+                    checkButton.disabled = false;
+                }, 2000);
+            };
+
+            request.send();
+        }
+
+        setInterval(() => {
+            const map = document.getElementById('alertMap');
+            map.src = `https://ubilling.net.ua/aerialalerts/?map=true×tamp=${new Date().getTime()}`;
+        }, 30000);
+    </script>
+</body>
+</html>

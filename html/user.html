@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Особисті дані</title>
+    <link rel="stylesheet" type="text/css" href="../css/user_style.css">
+</head>
+<body>
+    <nav>
+        <a href="/alerts">Перевірка тривог</a>
+        <a href="/user">Особисті дані</a>
+    </nav>
+
+    <div class="container">
+        <h1>Отримати особисті дані</h1>
+        <h2>Введіть логін</h2>
+        <div class="controls">
+            <input type="text" id="moodleLogin" placeholder="Наприклад, is-31fiot-23-070">
+            <button id="submitButton" onclick="getUserInfo()">Отримати дані</button>
+        </div>
+        <div id="errorMessage">Спробуйте ще раз з іншим логіном</div>
+        <div id="userInfo"></div>
+    </div>
+
+    <script>
+        function getUserInfo() {
+            const moodleLogin = document.getElementById('moodleLogin').value.trim();
+            const userInfoDiv = document.getElementById('userInfo');
+            const errorMessageDiv = document.getElementById('errorMessage');
+            const submitButton = document.getElementById('submitButton');
+
+            if (!moodleLogin) {
+                userInfoDiv.innerHTML = 'Будь ласка, введіть логін';
+                userInfoDiv.className = 'error';
+                errorMessageDiv.style.display = 'none';
+                return;
+            }
+
+            submitButton.disabled = true;
+            userInfoDiv.innerHTML = 'Завантаження...';
+            userInfoDiv.className = '';
+            errorMessageDiv.style.display = 'none';
+
+            const request = new XMLHttpRequest();
+            const requestURL = `/${moodleLogin}`;
+
+            request.open("GET", requestURL, true);
+            request.onload = function() {
+                if (request.status === 200) {
+                    const data = JSON.parse(request.responseText);
+                    userInfoDiv.innerHTML = `
+                        <h3>Особисті дані</h3>
+                        Логін: ${data.login}<br>
+                        Прізвище: ${data.surname}<br>
+                        Ім'я: ${data.name}<br>
+                        Курс: ${data.course}<br>
+                        Група: ${data.group}
+                    `;
+                    if (!data.isValid) {
+                        errorMessageDiv.style.display = 'block';
+                    }
+                } else {
+                    userInfoDiv.innerHTML = `Помилка: ${request.statusText || 'Невідома помилка'}`;
+                    userInfoDiv.className = 'error';
+                    errorMessageDiv.style.display = 'none';
+                }
+
+                setTimeout(() => {
+                    submitButton.disabled = false;
+                }, 2000);
+            };
+
+            request.onerror = function() {
+                userInfoDiv.innerHTML = 'Помилка: Не вдалося виконати запит';
+                userInfoDiv.className = 'error';
+                errorMessageDiv.style.display = 'none';
+                setTimeout(() => {
+                    submitButton.disabled = false;
+                }, 2000);
+            };
+
+            request.send();
+        }
+    </script>
+</body>
+</html>
