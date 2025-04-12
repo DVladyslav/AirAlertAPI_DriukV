@@ -21,7 +21,7 @@ body {
     max-width: 100%;
     position: relative;
     overflow: hidden;
-    aspect-ratio: 16 / 9;
+    aspect-ratio: 4 / 3;
 }
 
 nav {
@@ -99,6 +99,7 @@ h2 {
     box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
     pointer-events: none;
     transform-origin: center center;
+
 }
 
 .controls {
@@ -191,7 +192,6 @@ button:disabled {
     }
     .map-container {
         width: 100%;
-        aspect-ratio: 16 / 9;
     }
     nav a {
         margin: 0 10px;
