@@ -6,7 +6,7 @@ const cacheDuration = 60 * 1000;
 
 async function fetchAlerts() {
     try {
-        const response = await axios.get('https://ubilling.net.ua/aerialalerts/');
+        const response = await axios.get('https://ubilling.net.ua/aerialalerts/?json=true');
         const alerts = response.data.states;
         if (!alerts) {
             throw new Error("Поле 'states' відсутнє у відповіді API");
