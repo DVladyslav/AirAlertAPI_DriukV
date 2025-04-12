@@ -16,12 +16,12 @@ body {
 }
 
 .map-container {
-    width: 70%;
-    margin: 0 auto;
+    width: 100%;
+    margin: 0 auto 30px auto;
     max-width: 100%;
     position: relative;
     overflow: hidden;
-    aspect-ratio: 4 / 3;
+    aspect-ratio: 16 / 9;
 }
 
 nav {
@@ -98,7 +98,7 @@ h2 {
     border: none;
     box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
     pointer-events: none;
-    transform-origin: top center;
+    transform-origin: center center;
 }
 
 .controls {
@@ -191,7 +191,7 @@ button:disabled {
     }
     .map-container {
         width: 100%;
-        aspect-ratio: 4 / 3;
+        aspect-ratio: 16 / 9;
     }
     nav a {
         margin: 0 10px;
@@ -213,7 +213,7 @@ button:disabled {
 
     #alertMap {
         transform: scale(0.9);
-        transform-origin: top center;
+        transform-origin: center center;
     }
 
     .controls {
